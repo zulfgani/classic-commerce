@@ -2,7 +2,7 @@
 /**
  * Display notices in admin
  *
- * @package WooCommerce\Admin
+ * @package ClassicCommerce\Admin
  * @version WC-3.4.0
  */
 
@@ -34,7 +34,7 @@ class WC_Admin_Notices {
 		'simplify_commerce'       => 'simplify_commerce_notice',
 		'regenerating_thumbnails' => 'regenerating_thumbnails_notice',
 		'no_secure_connection'    => 'secure_connection_notice',
-		'wootenberg'              => 'wootenberg_feature_plugin_notice',
+		'require_compat_plugin'   => 'require_compat_plugin_notice',
 	);
 
 	/**
@@ -50,7 +50,6 @@ class WC_Admin_Notices {
 
 		if ( current_user_can( 'manage_woocommerce' ) ) {
 			add_action( 'admin_print_styles', array( __CLASS__, 'add_notices' ) );
-			add_action( 'activate_gutenberg/gutenberg.php', array( __CLASS__, 'add_wootenberg_feature_plugin_notice_on_gutenberg_activate' ) );
 		}
 	}
 
@@ -92,8 +91,8 @@ class WC_Admin_Notices {
 			self::add_notice( 'no_secure_connection' );
 		}
 
-		self::add_wootenberg_feature_plugin_notice();
 		self::add_notice( 'template_files' );
+		self::add_notice( 'require_compat_plugin' );
 	}
 
 	/**
@@ -132,11 +131,11 @@ class WC_Admin_Notices {
 	public static function hide_notices() {
 		if ( isset( $_GET['wc-hide-notice'] ) && isset( $_GET['_wc_notice_nonce'] ) ) { // WPCS: input var ok, CSRF ok.
 			if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wc_notice_nonce'] ) ), 'woocommerce_hide_notices_nonce' ) ) { // WPCS: input var ok, CSRF ok.
-				wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce' ) );
+				wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'classic-commerce' ) );
 			}
 
 			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-				wp_die( esc_html__( 'You don&#8217;t have permission to do this.', 'woocommerce' ) );
+				wp_die( esc_html__( 'You don&#8217;t have permission to do this.', 'classic-commerce' ) );
 			}
 
 			$hide_notice = sanitize_text_field( wp_unslash( $_GET['wc-hide-notice'] ) ); // WPCS: input var ok, CSRF ok.
@@ -166,7 +165,7 @@ class WC_Admin_Notices {
 			'plugins',
 		);
 
-		// Notices should only show on WooCommerce screens, the main dashboard, and on the plugins screen.
+		// Notices should only show on ClassicCommerce screens, the main dashboard, and on the plugins screen.
 		if ( ! in_array( $screen_id, wc_get_screen_ids(), true ) && ! in_array( $screen_id, $show_on_screens, true ) ) {
 			return;
 		}
@@ -362,46 +361,17 @@ class WC_Admin_Notices {
 	}
 
 	/**
-	 * If Gutenberg is active, tell people about the Products block feature plugin.
-	 *
-	 * @since 3.4.3
-	 * @todo  Remove this notice and associated code once the feature plugin has been merged into core.
+	 * Notice for requiring the Classic Commerce compatibility plugin to run Woocommerce specific extensions.
 	 */
-	public static function add_wootenberg_feature_plugin_notice() {
-		if ( ( is_plugin_active( 'gutenberg/gutenberg.php' ) || version_compare( get_bloginfo( 'version' ), '5.0', '>=' ) ) && ! is_plugin_active( 'woo-gutenberg-products-block/woocommerce-gutenberg-products-block.php' ) ) {
-			self::add_notice( 'wootenberg' );
-		}
-	}
-
-	/**
-	 * Tell people about the Products block feature plugin when they activate Gutenberg.
-	 *
-	 * @since 3.4.3
-	 * @todo  Remove this notice and associated code once the feature plugin has been merged into core.
-	 */
-	public static function add_wootenberg_feature_plugin_notice_on_gutenberg_activate() {
-		if ( ! is_plugin_active( 'woo-gutenberg-products-block/woocommerce-gutenberg-products-block.php' ) && version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
-			self::add_notice( 'wootenberg' );
-		}
-	}
-
-	/**
-	 * Notice about trying the Products block.
-	 */
-	public static function wootenberg_feature_plugin_notice() {
-		if ( get_user_meta( get_current_user_id(), 'dismissed_wootenberg_notice', true ) || is_plugin_active( 'woo-gutenberg-products-block/woocommerce-gutenberg-products-block.php' ) ) {
-			self::remove_notice( 'wootenberg' );
-			return;
-		}
-
-		include dirname( __FILE__ ) . '/views/html-notice-wootenberg.php';
+	public static function require_compat_plugin_notice() {
+		include dirname( __FILE__ ) . '/views/html-notice-require-compat-plugin.php';
 	}
 
 	/**
 	 * Determine if the store is running SSL.
 	 *
 	 * @return bool Flag SSL enabled.
-	 * @since  3.5.1
+	 * @since  WC-3.5.1
 	 */
 	protected static function is_ssl() {
 		$shop_page = 0 < wc_get_page_id( 'shop' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : get_home_url();

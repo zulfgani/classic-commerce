@@ -2,7 +2,7 @@
 /**
  * Setup menus in WP admin.
  *
- * @package WooCommerce\Admin
+ * @package ClassicCommerce\Admin
  * @version WC-2.5.0
  */
 
@@ -31,6 +31,7 @@ class WC_Admin_Menus {
 			add_action( 'admin_menu', array( $this, 'addons_menu' ), 70 );
 		}
 
+		add_action( 'admin_menu', array( $this, 'admin_menu_rename' ), PHP_INT_MAX - 1 );
 		add_action( 'admin_head', array( $this, 'menu_highlight' ) );
 		add_action( 'admin_head', array( $this, 'menu_order_count' ) );
 		add_filter( 'menu_order', array( $this, 'menu_order' ) );
@@ -56,9 +57,9 @@ class WC_Admin_Menus {
 			$menu[] = array( '', 'read', 'separator-woocommerce', '', 'wp-menu-separator woocommerce' ); // WPCS: override ok.
 		}
 
-		add_menu_page( __( 'WooCommerce', 'woocommerce' ), __( 'WooCommerce', 'woocommerce' ), 'manage_woocommerce', 'woocommerce', null, null, '55.5' );
+		add_menu_page( __( 'Classic Commerce', 'classic-commerce' ), __( 'WooCommerce', 'classic-commerce' ), 'manage_woocommerce', 'woocommerce', null, WC()->plugin_url() . '/assets/images/classiccommerce-icon-white.svg', '55.5' );
 
-		add_submenu_page( 'edit.php?post_type=product', __( 'Attributes', 'woocommerce' ), __( 'Attributes', 'woocommerce' ), 'manage_product_terms', 'product_attributes', array( $this, 'attributes_page' ) );
+		add_submenu_page( 'edit.php?post_type=product', __( 'Attributes', 'classic-commerce' ), __( 'Attributes', 'classic-commerce' ), 'manage_product_terms', 'product_attributes', array( $this, 'attributes_page' ) );
 	}
 
 	/**
@@ -66,9 +67,9 @@ class WC_Admin_Menus {
 	 */
 	public function reports_menu() {
 		if ( current_user_can( 'manage_woocommerce' ) ) {
-			add_submenu_page( 'woocommerce', __( 'Reports', 'woocommerce' ), __( 'Reports', 'woocommerce' ), 'view_woocommerce_reports', 'wc-reports', array( $this, 'reports_page' ) );
+			add_submenu_page( 'woocommerce', __( 'Reports', 'classic-commerce' ), __( 'Reports', 'classic-commerce' ), 'view_woocommerce_reports', 'wc-reports', array( $this, 'reports_page' ) );
 		} else {
-			add_menu_page( __( 'Sales reports', 'woocommerce' ), __( 'Sales reports', 'woocommerce' ), 'view_woocommerce_reports', 'wc-reports', array( $this, 'reports_page' ), null, '55.6' );
+			add_menu_page( __( 'Sales reports', 'classic-commerce' ), __( 'Sales reports', 'classic-commerce' ), 'view_woocommerce_reports', 'wc-reports', array( $this, 'reports_page' ), null, '55.6' );
 		}
 	}
 
@@ -76,7 +77,7 @@ class WC_Admin_Menus {
 	 * Add menu item.
 	 */
 	public function settings_menu() {
-		$settings_page = add_submenu_page( 'woocommerce', __( 'WooCommerce settings', 'woocommerce' ), __( 'Settings', 'woocommerce' ), 'manage_woocommerce', 'wc-settings', array( $this, 'settings_page' ) );
+		$settings_page = add_submenu_page( 'woocommerce', __( 'Classic Commerce settings', 'classic-commerce' ), __( 'Settings', 'classic-commerce' ), 'manage_woocommerce', 'wc-settings', array( $this, 'settings_page' ) );
 
 		add_action( 'load-' . $settings_page, array( $this, 'settings_page_init' ) );
 	}
@@ -120,17 +121,39 @@ class WC_Admin_Menus {
 	 * Add menu item.
 	 */
 	public function status_menu() {
-		add_submenu_page( 'woocommerce', __( 'WooCommerce status', 'woocommerce' ), __( 'Status', 'woocommerce' ), 'manage_woocommerce', 'wc-status', array( $this, 'status_page' ) );
+		add_submenu_page( 'woocommerce', __( 'Classic Commerce status', 'classic-commerce' ), __( 'Status', 'classic-commerce' ), 'manage_woocommerce', 'wc-status', array( $this, 'status_page' ) );
 	}
 
 	/**
 	 * Addons menu item.
 	 */
 	public function addons_menu() {
-		$count_html = WC_Helper_Updater::get_updates_count_html();
-		/* translators: %s: extensions count */
-		$menu_title = sprintf( __( 'Extensions %s', 'woocommerce' ), $count_html );
-		add_submenu_page( 'woocommerce', __( 'WooCommerce extensions', 'woocommerce' ), $menu_title, 'manage_woocommerce', 'wc-addons', array( $this, 'addons_page' ) );
+		$menu_title = __( 'Extensions', 'classic-commerce' );
+		add_submenu_page( 'woocommerce', __( 'Classic Commerce extensions', 'classic-commerce' ), $menu_title, 'manage_woocommerce', 'wc-addons', array( $this, 'addons_page' ) );
+	}
+
+	/**
+	 * Rename the top-level menu item.
+	 *
+	 * This is still registered as WooCommerce for compatibility with existing
+	 * extensions that use the screen ID.  More info:
+	 *
+	 * - https://www.skyverge.com/blog/screen-id-checks-wordpress-submenu-pages/
+	 * - https://wpdirectory.net, search for "sanitize_title.{0,90}woocommerce"
+	 * - https://github.com/ClassicPress-research/classic-commerce/pull/119
+	 *
+	 * Based on https://gist.github.com/geoffspink/e191a7cad8c9a23f5c60.
+	 *
+	 * @since 1.0.0
+	 */
+	public function admin_menu_rename() {
+		global $menu;
+		foreach ( $menu as $key => &$value ) {
+			if ( isset( $value[5] ) && $value[5] === 'toplevel_page_woocommerce' ) {
+				$value[0] = esc_html__( 'Commerce', 'classic-commerce' );
+				break;
+			}
+		}
 	}
 
 	/**
@@ -161,7 +184,7 @@ class WC_Admin_Menus {
 		global $submenu;
 
 		if ( isset( $submenu['woocommerce'] ) ) {
-			// Remove 'WooCommerce' sub menu item.
+			// Remove 'ClassicCommerce' sub menu item.
 			unset( $submenu['woocommerce'][0] );
 
 			$order_count = wc_processing_order_count();
@@ -169,7 +192,7 @@ class WC_Admin_Menus {
 			// Add count if user has access.
 			if ( apply_filters( 'woocommerce_include_processing_order_count_in_menu', true ) && current_user_can( 'manage_woocommerce' ) && $order_count ) {
 				foreach ( $submenu['woocommerce'] as $key => $menu_item ) {
-					if ( 0 === strpos( $menu_item[0], _x( 'Orders', 'Admin menu name', 'woocommerce' ) ) ) {
+					if ( 0 === strpos( $menu_item[0], _x( 'Orders', 'Admin menu name', 'classic-commerce' ) ) ) {
 						$submenu['woocommerce'][ $key ][0] .= ' <span class="awaiting-mod update-plugins count-' . esc_attr( $order_count ) . '"><span class="processing-count">' . number_format_i18n( $order_count ) . '</span></span>'; // WPCS: override ok.
 						break;
 					}
@@ -278,7 +301,7 @@ class WC_Admin_Menus {
 	 * Adapted from http://www.johnmorrisonline.com/how-to-add-a-fully-functional-custom-meta-box-to-wordpress-navigation-menus/.
 	 */
 	public function add_nav_menu_meta_boxes() {
-		add_meta_box( 'woocommerce_endpoints_nav_link', __( 'WooCommerce endpoints', 'woocommerce' ), array( $this, 'nav_menu_links' ), 'nav-menus', 'side', 'low' );
+		add_meta_box( 'woocommerce_endpoints_nav_link', __( 'Classic Commerce endpoints', 'classic-commerce' ), array( $this, 'nav_menu_links' ), 'nav-menus', 'side', 'low' );
 	}
 
 	/**
@@ -294,7 +317,7 @@ class WC_Admin_Menus {
 		}
 
 		// Include missing lost password.
-		$endpoints['lost-password'] = __( 'Lost password', 'woocommerce' );
+		$endpoints['lost-password'] = __( 'Lost password', 'classic-commerce' );
 
 		$endpoints = apply_filters( 'woocommerce_custom_nav_menu_items', $endpoints );
 
@@ -323,10 +346,10 @@ class WC_Admin_Menus {
 			</div>
 			<p class="button-controls">
 				<span class="list-controls">
-					<a href="<?php echo esc_url( admin_url( 'nav-menus.php?page-tab=all&selectall=1#posttype-woocommerce-endpoints' ) ); ?>" class="select-all"><?php esc_html_e( 'Select all', 'woocommerce' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'nav-menus.php?page-tab=all&selectall=1#posttype-woocommerce-endpoints' ) ); ?>" class="select-all"><?php esc_html_e( 'Select all', 'classic-commerce' ); ?></a>
 				</span>
 				<span class="add-to-menu">
-					<button type="submit" class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to menu', 'woocommerce' ); ?>" name="add-post-type-menu-item" id="submit-posttype-woocommerce-endpoints"><?php esc_html_e( 'Add to menu', 'woocommerce' ); ?></button>
+					<button type="submit" class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to menu', 'classic-commerce' ); ?>" name="add-post-type-menu-item" id="submit-posttype-woocommerce-endpoints"><?php esc_html_e( 'Add to menu', 'classic-commerce' ); ?></button>
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -360,7 +383,7 @@ class WC_Admin_Menus {
 			array(
 				'parent' => 'site-name',
 				'id'     => 'view-store',
-				'title'  => __( 'Visit Store', 'woocommerce' ),
+				'title'  => __( 'Visit Store', 'classic-commerce' ),
 				'href'   => wc_get_page_permalink( 'shop' ),
 			)
 		);
