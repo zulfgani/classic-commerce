@@ -2,13 +2,13 @@
 /**
  * Class WC_Tests_REST_System_Status file.
  *
- * @package WooCommerce/Tests
+ * @package ClassicCommerce/Tests
  */
 
 /**
  * System Status REST Tests.
  *
- * @package WooCommerce\Tests\API
+ * @package ClassicCommerce\Tests\API
  * @since 3.5.0
  */
 class WC_Tests_REST_System_Status extends WC_REST_Unit_Test_Case {
@@ -77,12 +77,49 @@ class WC_Tests_REST_System_Status extends WC_REST_Unit_Test_Case {
 	 */
 	public function test_get_system_status_info_environment() {
 		wp_set_current_user( $this->user );
-		$response    = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v3/system_status' ) );
-		$data        = $response->get_data();
+		$response = $this->server->dispatch(
+			new WP_REST_Request( 'GET', '/wc/v3/system_status' )
+		);
+		$data = $response->get_data();
+
 		$environment = (array) $data['environment'];
 
-		// Make sure all expected data is present
-		$this->assertEquals( 32, count( $environment ) );
+		// Make sure all expected data is present.
+		$this->assertEquals( [
+			'home_url',
+			'site_url',
+			'version',
+			'cc_version',
+			'log_directory',
+			'log_directory_writable',
+			'wp_version',
+			'wp_multisite',
+			'wp_memory_limit',
+			'wp_debug_mode',
+			'wp_cron',
+			'language',
+			'external_object_cache',
+			'server_info',
+			'php_version',
+			'php_post_max_size',
+			'php_max_execution_time',
+			'php_max_input_vars',
+			'curl_version',
+			'suhosin_installed',
+			'max_upload_size',
+			'mysql_version',
+			'mysql_version_string',
+			'default_timezone',
+			'fsockopen_or_curl_enabled',
+			'soapclient_enabled',
+			'domdocument_enabled',
+			'gzip_enabled',
+			'mbstring_enabled',
+			'remote_post_successful',
+			'remote_post_response',
+			'remote_get_successful',
+			'remote_get_response',
+		], array_keys( $environment ) );
 
 		// Test some responses to make sure they match up.
 		$this->assertEquals( get_option( 'home' ), $environment['home_url'] );
@@ -143,7 +180,7 @@ class WC_Tests_REST_System_Status extends WC_REST_Unit_Test_Case {
 		$theme    = (array) $data['theme'];
 
 		$this->assertEquals( 13, count( $theme ) );
-		$this->assertEquals( $active_theme->Name, $theme['name'] ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+		$this->assertEquals( $active_theme->name, $theme['name'] );
 	}
 
 	/**
@@ -218,72 +255,6 @@ class WC_Tests_REST_System_Status extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'settings', $properties );
 		$this->assertArrayHasKey( 'security', $properties );
 		$this->assertArrayHasKey( 'pages', $properties );
-	}
-
-	/**
-	 * Test to make sure get_items (all tools) response is correct.
-	 *
-	 * @since 3.5.0
-	 */
-	public function test_get_system_tools() {
-		wp_set_current_user( $this->user );
-
-		$tools_controller = new WC_REST_System_Status_Tools_Controller();
-		$raw_tools        = $tools_controller->get_tools();
-
-		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v3/system_status/tools' ) );
-		$data     = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( count( $raw_tools ), count( $data ) );
-		$this->assertContains(
-			array(
-				'id'          => 'reset_tracking',
-				'name'        => 'Reset usage tracking',
-				'action'      => 'Reset',
-				'description' => 'This will reset your usage tracking settings, causing it to show the opt-in banner again and not sending any data.',
-				'_links'      => array(
-					'item' => array(
-						array(
-							'href'       => rest_url( '/wc/v3/system_status/tools/reset_tracking' ),
-							'embeddable' => true,
-						),
-					),
-				),
-			),
-			$data
-		);
-
-		$query_params = array(
-			'_fields' => 'id,name,nonexisting',
-		);
-		$request      = new WP_REST_Request( 'GET', '/wc/v3/system_status/tools' );
-		$request->set_query_params( $query_params );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( count( $raw_tools ), count( $data ) );
-		$this->assertContains(
-			array(
-				'id'   => 'reset_tracking',
-				'name' => 'Reset usage tracking',
-			),
-			$data
-		);
-		foreach ( $data as $item ) {
-			// Fields that are not requested are not returned in response.
-			$this->assertArrayNotHasKey( 'action', $item );
-			$this->assertArrayNotHasKey( 'description', $item );
-			// Links are part of data in collections, so excluded if not explicitly requested.
-			$this->assertArrayNotHasKey( '_links', $item );
-			// Non existing field is ignored.
-			$this->assertArrayNotHasKey( 'nonexisting', $item );
-		}
-
-		// Links are part of data, not links in collections.
-		$links = $response->get_links();
-		$this->assertEquals( 0, count( $links ) );
 	}
 
 	/**
@@ -468,7 +439,7 @@ class WC_Tests_REST_System_Status extends WC_REST_Unit_Test_Case {
 	 *
 	 * This function is called by WP_HTTP_TestCase::http_request_listner().
 	 *
-	 * @param array $request Request arguments.
+	 * @param array  $request Request arguments.
 	 * @param string $url URL of the request.
 	 *
 	 * @return array|false mocked response or false to let WP perform a regular request.

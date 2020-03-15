@@ -1,4 +1,4 @@
-Feature: Manage WooCommerce Payment Gateways
+Feature: Manage Classic Commerce Payment Gateways
 
 Background:
 

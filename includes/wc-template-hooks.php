@@ -1,10 +1,10 @@
 <?php
 /**
- * WooCommerce Template Hooks
+ * Classic Commerce Template Hooks
  *
- * Action/filter hooks used for WooCommerce functions/templates.
+ * Action/filter hooks used for Classic Commerce functions/templates.
  *
- * @package WooCommerce/Templates
+ * @package ClassicCommerce/Templates
  * @version WC-2.1.0
  */
 
@@ -267,13 +267,6 @@ add_action( 'woocommerce_available_downloads', 'woocommerce_order_downloads_tabl
  */
 add_action( 'woocommerce_auth_page_header', 'woocommerce_output_auth_header', 10 );
 add_action( 'woocommerce_auth_page_footer', 'woocommerce_output_auth_footer', 10 );
-
-/**
- * Comments.
- *
- * Disable Jetpack comments.
- */
-add_filter( 'jetpack_comment_form_enabled_for_product', '__return_false' );
 
 /**
  * My Account.

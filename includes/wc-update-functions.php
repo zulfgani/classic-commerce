@@ -1,10 +1,10 @@
 <?php
 /**
- * WooCommerce Updates
+ * Classic Commerce Updates
  *
  * Functions for updating data, used by the background updater.
  *
- * @package WooCommerce/Functions
+ * @package ClassicCommerce/Functions
  * @version WC-3.3.0
  */
 
@@ -54,8 +54,8 @@ function wc_update_200_permalinks() {
 		$base_slug = $shop_page_id > 0 && get_post( $shop_page_id ) ? get_page_uri( $shop_page_id ) : 'shop';
 
 		$category_base = get_option( 'woocommerce_prepend_shop_page_to_urls' ) == 'yes' ? trailingslashit( $base_slug ) : '';
-		$category_slug = get_option( 'woocommerce_product_category_slug' ) ? get_option( 'woocommerce_product_category_slug' ) : _x( 'product-category', 'slug', 'woocommerce' );
-		$tag_slug      = get_option( 'woocommerce_product_tag_slug' ) ? get_option( 'woocommerce_product_tag_slug' ) : _x( 'product-tag', 'slug', 'woocommerce' );
+		$category_slug = get_option( 'woocommerce_product_category_slug' ) ? get_option( 'woocommerce_product_category_slug' ) : _x( 'product-category', 'slug', 'classic-commerce' );
+		$tag_slug      = get_option( 'woocommerce_product_tag_slug' ) ? get_option( 'woocommerce_product_tag_slug' ) : _x( 'product-tag', 'slug', 'classic-commerce' );
 
 		if ( 'yes' == get_option( 'woocommerce_prepend_shop_page_to_products' ) ) {
 			$product_base = trailingslashit( $base_slug );
@@ -64,7 +64,7 @@ function wc_update_200_permalinks() {
 			if ( false !== $product_slug && ! empty( $product_slug ) ) {
 				$product_base = trailingslashit( $product_slug );
 			} else {
-				$product_base = trailingslashit( _x( 'product', 'slug', 'woocommerce' ) );
+				$product_base = trailingslashit( _x( 'product', 'slug', 'classic-commerce' ) );
 			}
 		}
 
@@ -912,7 +912,7 @@ function wc_update_240_refunds() {
 			wc_create_refund(
 				array(
 					'amount'     => $order_total - $refunded_total,
-					'reason'     => __( 'Order fully refunded', 'woocommerce' ),
+					'reason'     => __( 'Order fully refunded', 'classic-commerce' ),
 					'order_id'   => $refunded_order->ID,
 					'line_items' => array(),
 					'date'       => $refunded_order->post_modified,
@@ -1893,4 +1893,11 @@ function wc_update_352_drop_download_log_fk() {
 	if ( $results ) {
 		$wpdb->query( "ALTER TABLE {$wpdb->prefix}wc_download_log DROP FOREIGN KEY fk_wc_download_log_permission_id" ); // phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 	}
+}
+
+/**
+ * Update DB Version.
+ */
+function wc_update_353_db_version() {
+	WC_Install::update_db_version( '3.5.3' );
 }

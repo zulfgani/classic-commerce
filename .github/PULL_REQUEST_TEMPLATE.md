@@ -1,6 +1,6 @@
 ### All Submissions:
 
-* [ ] Have you followed the [ClassicCommerce Contributing guideline](https://github.com/ClassicPress-research/classic-commerce/blob/master/.github/CONTRIBUTING.md)?
+* [ ] Have you followed the [Classic Commerce Contributing guideline](https://github.com/ClassicPress-research/classic-commerce/blob/master/.github/CONTRIBUTING.md)?
 * [ ] Does your code follow the [repo standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/)?
 * [ ] Have you checked to ensure there aren't other open [Pull Requests](../../pulls) for the same update/change?
 
@@ -20,14 +20,19 @@ Closes # .
 2.
 3.
 
+### Screenshot - before:
+
+<!-- Upload a screenshot(s) of the relevant section(s) of the UI before your changes. -->
+
+### Screenshot - after:
+
+<!-- Upload a screenshot(s) of the relevant section(s) of the UI after your changes. -->
+
 ### Other information:
 
 * [ ] Have you added an explanation of what your changes do and why you'd like us to include them?
 * [ ] Have you written new tests for your changes, as applicable?
 * [ ] Have you successfully ran tests with your changes locally?
+* [ ] Have you included screenshots before/after your changes, if applicable?
 
 <!-- Mark completed items with an [x] -->
-
-### Changelog entry
-
-> Enter a short summary of all changes on this Pull Request. This will appear in the changelog if accepted.

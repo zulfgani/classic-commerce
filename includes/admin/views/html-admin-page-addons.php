@@ -4,120 +4,70 @@
  *
  * @var string $view
  * @var object $addons
+ * @package Classic Commerce
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 ?>
-<div class="wrap woocommerce wc_addons_wrap">
-	<nav class="nav-tab-wrapper woo-nav-tab-wrapper">
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-addons' ) ); ?>" class="nav-tab nav-tab-active"><?php _e( 'Browse Extensions', 'woocommerce' ); ?></a>
+<div class="wrap woocommerce">
 
-		<?php
-			$count_html = WC_Helper_Updater::get_updates_count_html();
-			$menu_title = sprintf( __( 'WooCommerce.com Subscriptions %s', 'woocommerce' ), $count_html );
-		?>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-addons&section=helper' ) ); ?>" class="nav-tab"><?php echo $menu_title; ?></a>
-	</nav>
+	<h2><?php esc_html_e( 'Extensions for Classic Commerce', 'classic-commerce' ); ?></h2>
 
-	<h1 class="screen-reader-text"><?php _e( 'WooCommerce Extensions', 'woocommerce' ); ?></h1>
+	<hr>
 
-	<?php if ( $sections ) : ?>
-		<ul class="subsubsub">
-			<?php foreach ( $sections as $section ) : ?>
-				<li>
-					<a
-						class="<?php echo $current_section === $section->slug ? 'current' : ''; ?>"
-						href="<?php echo admin_url( 'admin.php?page=wc-addons&section=' . esc_attr( $section->slug ) ); ?>">
-						<?php echo esc_html( $section->label ); ?>
-					</a>
-				</li>
-			<?php endforeach; ?>
-		</ul>
+	<h3 id="cc-compat"><?php esc_html_e( 'Important Note:', 'classic-commerce' ); ?></h3>
 
-		<?php if ( isset( $_GET['search'] ) ) : ?>
-			<h1 class="search-form-title" >
-				<?php printf( __( 'Showing search results for: %s', 'woocommerce' ), '<strong>' . esc_html( $_GET['search'] ) . '</strong>' ); ?>
-			</h1>
-		<?php endif; ?>
+	<p><?php esc_html_e( 'Although Classic Commerce is a fork of WooCommerce version 3.5.3, all JetPack and WooCommerce Services integration have been removed.', 'classic-commerce' ); ?></p>
 
-		<form class="search-form" method="GET">
-			<button type="submit">
-				<span class="dashicons dashicons-search"></span>
-			</button>
-			<input
-				type="text"
-				name="search"
-				value="<?php echo esc_attr( isset( $_GET['search'] ) ? $_GET['search'] : '' ); ?>"
-				placeholder="<?php _e( 'Enter a search term and press enter', 'woocommerce' ); ?>">
-			<input type="hidden" name="page" value="wc-addons">
-			<?php $page_section = ( isset( $_GET['section'] ) && '_featured' !== $_GET['section'] ) ? $_GET['section'] : '_all'; ?>
-			<input type="hidden" name="section" value="<?php echo esc_attr( $page_section ); ?>">
-		</form>
-		<?php if ( '_featured' === $current_section ) : ?>
-			<div class="addons-featured">
-				<?php
-					$featured = WC_Admin_Addons::get_featured();
-				?>
-			</div>
-		<?php endif; ?>
-		<?php if ( '_featured' !== $current_section && $addons ) : ?>
-			<?php if ( 'shipping_methods' === $current_section ) : ?>
-				<div class="addons-shipping-methods">
-					<?php WC_Admin_Addons::output_wcs_banner_block(); ?>
-				</div>
-			<?php endif; ?>
-			<ul class="products">
-			<?php foreach ( $addons as $addon ) : ?>
-				<?php
-				if ( 'shipping_methods' === $current_section ) {
-					// Do not show USPS or Canada Post extensions for US and CA stores, respectively.
-					$country = WC()->countries->get_base_country();
-					if ( 'US' === $country
-						&& false !== strpos(
-							$addon->link, 'woocommerce.com/products/usps-shipping-method'
-						)
-					) {
-						continue;
-					}
-					if ( 'CA' === $country
-						&& false !== strpos(
-							$addon->link, 'woocommerce.com/products/canada-post-shipping-method'
-						)
-					) {
-						continue;
-					}
-				}
-				?>
-				<li class="product">
-					<a href="<?php echo esc_attr( $addon->link ); ?>">
-						<?php if ( ! empty( $addon->image ) ) : ?>
-							<span class="product-img-wrap"><img src="<?php echo esc_url( $addon->image ); ?>"/></span>
-						<?php else : ?>
-							<h2><?php echo esc_html( $addon->title ); ?></h2>
-						<?php endif; ?>
-						<span class="price"><?php echo wp_kses_post( $addon->price ); ?></span>
-						<p><?php echo wp_kses_post( $addon->excerpt ); ?></p>
-					</a>
-				</li>
-			<?php endforeach; ?>
-			</ul>
-		<?php endif; ?>
-	<?php else : ?>
-		<p><?php printf( __( 'Our catalog of WooCommerce Extensions can be found on WooCommerce.com here: <a href="%s">WooCommerce Extensions Catalog</a>', 'woocommerce' ), 'https://woocommerce.com/product-category/woocommerce-extensions/' ); ?></p>
-	<?php endif; ?>
+	<p><?php esc_html_e( 'Many extensions or plugins designed for WooCommerce will still work with Classic Commerce provided they do not rely on Jetpack or WooCommerce Services.', 'classic-commerce' ); ?></p>
 
-	<?php if ( 'Storefront' !== $theme['Name'] && '_featured' !== $current_section ) : ?>
-		<div class="storefront">
-			<a href="<?php echo esc_url( 'https://woocommerce.com/storefront/' ); ?>" target="_blank"><img src="<?php echo WC()->plugin_url(); ?>/assets/images/storefront.png" alt="Storefront" /></a>
-			<h2><?php _e( 'Looking for a WooCommerce theme?', 'woocommerce' ); ?></h2>
-			<p><?php _e( 'We recommend Storefront, the <em>official</em> WooCommerce theme.', 'woocommerce' ); ?></p>
-			<p><?php _e( 'Storefront is an intuitive, flexible and <strong>free</strong> WordPress theme offering deep integration with WooCommerce and many of the most popular customer-facing extensions.', 'woocommerce' ); ?></p>
-			<p>
-				<a href="https://woocommerce.com/storefront/" target="_blank" class="button"><?php _e( 'Read all about it', 'woocommerce' ); ?></a>
-				<a href="<?php echo esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-theme&theme=storefront' ), 'install-theme_storefront' ) ); ?>" class="button button-primary"><?php _e( 'Download &amp; install', 'woocommerce' ); ?></a>
-			</p>
-		</div>
-	<?php endif; ?>
+	<hr />
+	
+	<h3 id="cc-compat"><?php esc_html_e( 'Classic Commerce Compatibility Plugin', 'classic-commerce' ); ?></h3>
+
+	<p><?php esc_html_e( 'This is an optional plugin that is seperately installed and activated. Its primary purpose is to ensure Classic Commerce compatibility with extensions that are dependent on the installation of WooCommerce.', 'classic-commerce' ); ?></p>
+	
+	<p><?php printf( __( '<strong>First, delete WooCommerce</strong> in order to run the Compatibility plugin. The two cannot co-exist!', 'classic-commerce' ) ); ?></p>
+
+	<p><?php printf( __( '<strong>Note:</strong> The Compatibility plugin does not fix all compatibility issues apart from specific checks the extensions run to detect WooCommerce installation.', 'classic-commerce' ) ); ?></p>
+
+	<p><?php printf( __( '<strong>Sample checks include:</strong>', 'classic-commerce' ) ); ?></p>
+
+	<p><code>in_array( 'woocommerce/woocommerce.php', self::$active_plugins ) || array_key_exists( 'woocommerce/woocommerce.php', self::$active_plugins );</code></p>
+
+	<p><code>in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) );</code></p>
+
+	<p><code>is_plugin_active( 'woocommerce/woocommerce.php' )</code></p>
+	
+	<hr />
+
+	<h3><?php esc_html_e( 'Disclaimer', 'classic-commerce' ); ?></h3>
+
+	<p><?php printf( __( '<strong>The end user is entirely responsible</strong> for choosing, installing, testing and monitoring any extensions or plugins that are needed to provide extra functionality to the Classic Commerce core.', 'classic-commerce' ) ); ?></p>
+
+	<p><?php esc_html_e( 'Before installing and using any extensions or plugins we strongly recommend that you first work in a test environment. If you are working on a live site please ensure that you have a recent backup.', 'classic-commerce' ); ?></p>
+
+	<hr />
+
+	<h3><?php esc_html_e( 'Feedback:', 'classic-commerce' ); ?></h3>
+
+	<p><?php printf( __( 'For discussion and help with finding compatible Classic Commerce addons, use the <a href="%s">ClassicPress community forum</a>.', 'classic-commerce' ), 'https://forums.classicpress.net/tags/classic-commerce/' ); ?></p>
+
+	<p><?php printf( __( 'For problems with the Classic Commerce core files please raise an issue via <a href="%s">Github issues</a>.', 'classic-commerce' ), 'https://github.com/ClassicPress-research/classic-commerce/issues/' ); ?></p>
+
+	<hr />
+
+	<h3><?php esc_html_e( 'GNU General Public License', 'classic-commerce' ); ?></h3>
+
+	<p><?php esc_html_e( 'This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.', 'classic-commerce' ); ?></p>
+
+	<p><?php esc_html_e( 'This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.', 'classic-commerce' ); ?></p>
+
+	<p><?php printf( __( 'You should have received a copy of the GNU General Public License along with this program. If not, see <a href="%1s">www.gnu.org/licenses</a>.', 'classic-commerce' ), 'https://www.gnu.org/licenses/' ); ?></p>
+
 </div>
+
+

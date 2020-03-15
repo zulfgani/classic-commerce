@@ -1,4 +1,4 @@
-Feature: Manage WooCommerce customers
+Feature: Manage Classic Commerce customers
 
 Background:
 

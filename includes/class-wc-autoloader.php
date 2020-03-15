@@ -1,8 +1,8 @@
 <?php
 /**
- * WooCommerce Autoloader.
+ * Classic Commerce Autoloader.
  *
- * @package WooCommerce/Classes
+ * @package ClassicCommerce/Classes
  * @version WC-2.3.0
  */
 

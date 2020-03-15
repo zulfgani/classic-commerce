@@ -1,9 +1,9 @@
 <?php
 /**
- * Manages WooCommerce plugin updating on the Updates screen.
+ * Manages Classic Commerce plugin updating on the Updates screen.
  *
- * @package     WooCommerce/Admin
- * @version     3.2.0
+ * @package     ClassicCommerce/Admin
+ * @version     WC-3.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

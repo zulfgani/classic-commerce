@@ -2,13 +2,13 @@
 /**
  * Class WC_Tests_REST_System_Status file.
  *
- * @package WooCommerce/Tests
+ * @package ClassicCommerce/Tests
  */
 
 /**
  * System Status REST Tests.
  *
- * @package WooCommerce\Tests\API
+ * @package ClassicCommerce\Tests\API
  * @since 3.0
  */
 class WC_Tests_REST_System_Status_V2 extends WC_REST_Unit_Test_Case {
@@ -78,8 +78,42 @@ class WC_Tests_REST_System_Status_V2 extends WC_REST_Unit_Test_Case {
 		$data        = $response->get_data();
 		$environment = (array) $data['environment'];
 
-		// Make sure all expected data is present
-		$this->assertEquals( 32, count( $environment ) );
+		// Make sure all expected data is present.
+		$this->assertEquals( [
+			'home_url',
+			'site_url',
+			'version',
+			'cc_version',
+			'log_directory',
+			'log_directory_writable',
+			'wp_version',
+			'wp_multisite',
+			'wp_memory_limit',
+			'wp_debug_mode',
+			'wp_cron',
+			'language',
+			'external_object_cache',
+			'server_info',
+			'php_version',
+			'php_post_max_size',
+			'php_max_execution_time',
+			'php_max_input_vars',
+			'curl_version',
+			'suhosin_installed',
+			'max_upload_size',
+			'mysql_version',
+			'mysql_version_string',
+			'default_timezone',
+			'fsockopen_or_curl_enabled',
+			'soapclient_enabled',
+			'domdocument_enabled',
+			'gzip_enabled',
+			'mbstring_enabled',
+			'remote_post_successful',
+			'remote_post_response',
+			'remote_get_successful',
+			'remote_get_response',
+		], array_keys( $environment ) );
 
 		// Test some responses to make sure they match up.
 		$this->assertEquals( get_option( 'home' ), $environment['home_url'] );
@@ -140,7 +174,7 @@ class WC_Tests_REST_System_Status_V2 extends WC_REST_Unit_Test_Case {
 		$theme    = (array) $data['theme'];
 
 		$this->assertEquals( 13, count( $theme ) );
-		$this->assertEquals( $active_theme->Name, $theme['name'] ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
+		$this->assertEquals( $active_theme->name, $theme['name'] );
 	}
 
 	/**
@@ -215,41 +249,6 @@ class WC_Tests_REST_System_Status_V2 extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'settings', $properties );
 		$this->assertArrayHasKey( 'security', $properties );
 		$this->assertArrayHasKey( 'pages', $properties );
-	}
-
-	/**
-	 * Test to make sure get_items (all tools) response is correct.
-	 *
-	 * @since 3.0.0
-	 */
-	public function test_get_system_tools() {
-		wp_set_current_user( $this->user );
-
-		$tools_controller = new WC_REST_System_Status_Tools_Controller();
-		$raw_tools        = $tools_controller->get_tools();
-
-		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v2/system_status/tools' ) );
-		$data     = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( count( $raw_tools ), count( $data ) );
-		$this->assertContains(
-			array(
-				'id'          => 'reset_tracking',
-				'name'        => 'Reset usage tracking',
-				'action'      => 'Reset',
-				'description' => 'This will reset your usage tracking settings, causing it to show the opt-in banner again and not sending any data.',
-				'_links'      => array(
-					'item' => array(
-						array(
-							'href'       => rest_url( '/wc/v2/system_status/tools/reset_tracking' ),
-							'embeddable' => true,
-						),
-					),
-				),
-			),
-			$data
-		);
 	}
 
 	/**

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * WooCommerce class.
+ * Classic Commerce class.
  *
- * @package WooCommerce\Tests\Util
+ * @package ClassicCommerce\Tests\Util
  */
 class WC_Test_WooCommerce extends WC_Unit_Test_Case {
 
 	/**
-	 * WooCommerce instance.
+	 * Classic Commerce instance.
 	 *
 	 * @var \WooCommerce instance
 	 */
@@ -39,7 +39,7 @@ class WC_Test_WooCommerce extends WC_Unit_Test_Case {
 	 * @since WC-2.2
 	 */
 	public function test_constants() {
-		$this->assertEquals( str_replace( 'tests/unit-tests/core/', '', plugin_dir_path( __FILE__ ) ) . 'woocommerce.php', WC_PLUGIN_FILE );
+		$this->assertEquals( str_replace( 'tests/unit-tests/core/', '', plugin_dir_path( __FILE__ ) ) . 'classic-commerce.php', WC_PLUGIN_FILE );
 		$this->assertEquals( $this->wc->version, WC_VERSION );
 		$this->assertEquals( WC_VERSION, WOOCOMMERCE_VERSION );
 		$this->assertEquals( 6, WC_ROUNDING_PRECISION );
@@ -74,5 +74,20 @@ class WC_Test_WooCommerce extends WC_Unit_Test_Case {
 		$this->assertInstanceOf( 'WC_Emails', $this->wc->mailer() );
 		$this->assertInstanceOf( 'WC_Payment_Gateways', $this->wc->payment_gateways() );
 		$this->assertInstanceOf( 'WC_Checkout', $this->wc->checkout() );
+	}
+	
+	/**
+	 * Test: user_agent_header
+	 */
+	public function test_user_agent_header() {
+		$wc_version = $this->wc->version;
+		$cc_version = $this->wc->cc_version;
+		$expected = "WooCommerce/$wc_version (compatible; Classic Commerce/$cc_version)";
+		$actual = $this->wc->user_agent_header();
+		$expected_with_hook = "WooCommerce/$wc_version Hookshot (compatible; Classic Commerce/$cc_version)";
+		$actual_with_hook = $this->wc->user_agent_header( 'Hookshot' );
+
+		$this->assertEquals( $expected, $actual );
+		$this->assertEquals( $expected_with_hook, $actual_with_hook );
 	}
 }

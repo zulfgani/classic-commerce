@@ -1,11 +1,11 @@
 <?php
 /**
- * WooCommerce Shipping
+ * Classic Commerce Shipping
  *
  * Handles shipping and loads shipping methods via hooks.
  *
  * @version WC-2.6.0
- * @package WooCommerce/Classes/Shipping
+ * @package ClassicCommerce/Classes/Shipping
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,7 +48,7 @@ class WC_Shipping {
 	/**
 	 * The single instance of the class
 	 *
-	 * @var WC_Shipping
+	 * @var   WC_Shipping
 	 * @since WC-2.1
 	 */
 	protected static $_instance = null;
@@ -58,7 +58,7 @@ class WC_Shipping {
 	 *
 	 * Ensures only one instance of WC_Shipping is loaded or can be loaded.
 	 *
-	 * @since WC-2.1
+	 * @since  WC-2.1
 	 * @return WC_Shipping Main instance
 	 */
 	public static function instance() {
@@ -74,7 +74,7 @@ class WC_Shipping {
 	 * @since WC-2.1
 	 */
 	public function __clone() {
-		wc_doing_it_wrong( __FUNCTION__, __( 'Cloning is forbidden.', 'woocommerce' ), '2.1' );
+		wc_doing_it_wrong( __FUNCTION__, __( 'Cloning is forbidden.', 'classic-commerce' ), '2.1' );
 	}
 
 	/**
@@ -83,7 +83,7 @@ class WC_Shipping {
 	 * @since WC-2.1
 	 */
 	public function __wakeup() {
-		wc_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'woocommerce' ), '2.1' );
+		wc_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'classic-commerce' ), '2.1' );
 	}
 
 	/**
@@ -258,7 +258,7 @@ class WC_Shipping {
 		 * Allow packages to be reorganized after calculating the shipping.
 		 *
 		 * This filter can be used to apply some extra manipulation after the shipping costs are calculated for the packages
-		 * but before Woocommerce does anything with them. A good example of usage is to merge the shipping methods for multiple
+		 * but before WooCommerce does anything with them. A good example of usage is to merge the shipping methods for multiple
 		 * packages for marketplaces.
 		 *
 		 * @since WC-2.6.0
@@ -367,7 +367,7 @@ class WC_Shipping {
 	/**
 	 * Deprecated
 	 *
-	 * @deprecated 2.6.0 Was previously used to determine sort order of methods, but this is now controlled by zones and thus unused.
+	 * @deprecated WC-2.6.0 Was previously used to determine sort order of methods, but this is now controlled by zones and thus unused.
 	 */
 	public function sort_shipping_methods() {
 		wc_deprecated_function( 'sort_shipping_methods', '2.6' );

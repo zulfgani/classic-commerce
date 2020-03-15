@@ -1,9 +1,9 @@
 <?php
 /**
- * Manages WooCommerce plugin updating on the Plugins screen.
+ * Manages Classic Commerce plugin updating on the Plugins screen.
  *
- * @package     WooCommerce/Admin
- * @version     3.2.0
+ * @package     ClassicCommerce/Admin
+ * @version     WC-3.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,7 +72,7 @@ class WC_Plugins_Screen_Updates extends WC_Plugin_Updates {
 	/**
 	 * Get the upgrade notice from WordPress.org.
 	 *
-	 * @param  string $version WooCommerce new version.
+	 * @param  string $version Classic Commerce new version.
 	 * @return string
 	 */
 	protected function get_upgrade_notice( $version ) {
@@ -93,8 +93,8 @@ class WC_Plugins_Screen_Updates extends WC_Plugin_Updates {
 	/**
 	 * Parse update notice from readme file.
 	 *
-	 * @param  string $content WooCommerce readme file content.
-	 * @param  string $new_version WooCommerce new version.
+	 * @param  string $content Classic Commerce readme file content.
+	 * @param  string $new_version Classic Commerce new version.
 	 * @return string
 	 */
 	private function parse_update_notice( $content, $new_version ) {

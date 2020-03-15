@@ -1,13 +1,13 @@
 <?php
 /**
- * WooCommerce API
+ * Classic Commerce API
  *
  * Defines an interface that API request/response handlers should implement
  *
  * @author      WooThemes
  * @category    API
- * @package     WooCommerce/API
- * @since       2.1
+ * @package     ClassicCommerce/API
+ * @since       WC-2.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
